@@ -3,6 +3,8 @@ import { FormBuilder , FormGroup , Validators } from '@angular/forms';
 import { Feedback , ContactType } from '../shared/feedback';
 import { flyInOut } from '../animations/app.animation';
 
+import { FeedbackService } from '../services/feedback.service';
+
 @Component({
   selector: 'app-contact',
   templateUrl: './contact.component.html',
@@ -20,6 +22,10 @@ export class ContactComponent implements OnInit {
   feedbackForm: FormGroup;
   feedback: Feedback;
   contactType = ContactType;
+  errMess: string;
+  load_spinner: Boolean; // spinner while submitting
+  display_form: Boolean; // spinner while submitting
+
   @ViewChild('fform') feedbackFormDirective;
 
   formErrors = {
@@ -50,11 +56,14 @@ export class ContactComponent implements OnInit {
     },
   };
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,
+    private feedbackservice : FeedbackService) {
     this.createForm();
    }
 
   ngOnInit() {
+    this.load_spinner = false;
+    this.display_form = false;
   }
 
   createForm() {
@@ -97,6 +106,28 @@ export class ContactComponent implements OnInit {
   onSubmit(){
     this.feedback = this.feedbackForm.value;
     console.log(this.feedback);
+    
+    // Start spinner
+    this.load_spinner = true;
+    
+    // post the feedback using HTTP POST in feedback service
+    this.feedbackservice.submitFeedback(this.feedback)
+      .subscribe(feedback => {
+        // read the returend value
+        this.feedback = feedback;
+        // stop spinner
+        this.load_spinner = false;
+        //  Display form now
+        this.display_form = true;
+        setTimeout(() => {
+          // Stop Display after 5 sec
+          this.display_form = false;
+        }, 5000);
+      },
+      errmess => { this.errMess = <any>errmess;
+       this.feedback = null;
+       this.load_spinner = false; });
+
     this.feedbackForm.reset({
       firstname: '',
       lastname: '',
