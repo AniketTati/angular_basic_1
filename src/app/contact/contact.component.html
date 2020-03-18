@@ -39,7 +39,7 @@
   <!-- <p>{{ feedbackForm.value | json }} {{ feedbackForm.status }} {{display_form}}</p> -->
   <h3>Send us your Feedback</h3>
 
-  <div fxFlex fxFlexOffset="20px" class="form-size" *ngIf="!errMess && !display_form && !load_spinner">
+  <div fxFlex fxFlexOffset="20px" class="form-size" *ngIf="!errMess && !display_form && !load_spinner" [@expand]>
     
     <form novalidate [formGroup]="feedbackForm" #fform="ngForm" (ngSubmit)="onSubmit()">
       <p>
@@ -103,7 +103,7 @@
     <h4>{{errMess}}</h4>
   </div>
 
-  <div fxFlex fxFlexOffset="20px" *ngIf="!errMess && display_form">
+  <div fxFlex fxFlexOffset="20px" *ngIf="!errMess && display_form" [@expand]>
     <h3>Your Submission</h3>
     <mat-list>
       <mat-list-item> Firest Name : {{feedback.firstname}} </mat-list-item>
